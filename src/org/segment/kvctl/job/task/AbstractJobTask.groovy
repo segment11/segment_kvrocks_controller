@@ -1,5 +1,6 @@
 package org.segment.kvctl.job.task
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.segment.kvctl.App
@@ -12,11 +13,9 @@ abstract class AbstractJobTask {
     String step
 
     Integer jobLogId
-    JobLogDTO jobLog
 
-    AbstractJobTask(String step) {
-        this.step = step
-    }
+    @JsonIgnore
+    JobLogDTO jobLog
 
     protected String stepAsUuid() {
         step

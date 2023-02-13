@@ -1,7 +1,8 @@
 package org.segment.kvctl.job.task
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.transform.CompileStatic
-import groovy.transform.InheritConstructors
 import groovy.util.logging.Slf4j
 import org.segment.kvctl.App
 import org.segment.kvctl.ClusterVersionHelper
@@ -19,8 +20,14 @@ import redis.clients.jedis.exceptions.JedisDataException
 
 @CompileStatic
 @Slf4j
-@InheritConstructors
 class MigrateSlotsJobTask extends AbstractJobTask {
+    // for json read
+    MigrateSlotsJobTask() {}
+
+    MigrateSlotsJobTask(String step) {
+        this.step = step
+    }
+
     String fromIp
     Integer fromPort
     String fromNodeId
@@ -39,6 +46,7 @@ class MigrateSlotsJobTask extends AbstractJobTask {
     boolean ignoreLocalTest = false
 
     static final String PARAM_KEY_DONE_COUNT = 'done_count'
+    static final String PARAM_KEY_MYSELF = 'json_as_me_as_task'
 
     static final String KEY_SLOT_SET_MIGRATING = '_m'
     static final String KEY_SLOT_SET_IMPORTING = '_i'
@@ -53,6 +61,23 @@ class MigrateSlotsJobTask extends AbstractJobTask {
         stepAsUuid()
     }
 
+    @JsonIgnore
+    String innerJsonString
+
+    String toJsonForReload() {
+        if (innerJsonString) {
+            return innerJsonString
+        }
+        def om = new ObjectMapper()
+        innerJsonString = om.writeValueAsString(this)
+        innerJsonString
+    }
+
+    static MigrateSlotsJobTask reloadFromJson(String jsonString) {
+        def om = new ObjectMapper()
+        om.readValue(jsonString, MigrateSlotsJobTask)
+    }
+
     @Override
     JobResult doTask() {
         log.info stepAsUuid()
@@ -60,10 +85,19 @@ class MigrateSlotsJobTask extends AbstractJobTask {
         def app = App.instance
         def shardDetail = app.shardDetail
 
-        fromShardNode = shardDetail.findShardNodeByIpPort(fromIp, fromPort)
-        toShardNode = shardDetail.findShardNodeByIpPort(toIp, toPort)
+        // if reload from json
+        if (!fromShardNode) {
+            fromShardNode = shardDetail.findShardNodeByIpPort(fromIp, fromPort)
+        }
+        if (!toShardNode) {
+            toShardNode = shardDetail.findShardNodeByIpPort(toIp, toPort)
+        }
 
         log.info 'is add shard: {}', isAddShard
+
+        // save json first
+        new JobLogDTO(id: jobLogId, message: 'persist myself for reload').
+                addParam(PARAM_KEY_MYSELF, toJsonForReload()).update()
 
         def doneCountSaved = jobLog.param(PARAM_KEY_DONE_COUNT)
         int doneCount = doneCountSaved ? doneCountSaved as int : 0
@@ -143,8 +177,10 @@ class MigrateSlotsJobTask extends AbstractJobTask {
                     tmpSaveMigratedSlot(slot, fromShardNode, toShardNode)
 
                     if (loopCount % 100 == 0) {
+                        log.info 'loop count: {}, migrated count: {}', loopCount, migratedCount
                         // for job log show, not just Running
                         new JobLogDTO(id: jobLogId, message: 'slots migrate number: ' + loopCount).
+                                addParam(PARAM_KEY_MYSELF, innerJsonString).
                                 addParam(PARAM_KEY_DONE_COUNT, loopCount.toString()).update()
 
                         if (isLocalTest) {

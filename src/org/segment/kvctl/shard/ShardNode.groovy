@@ -1,5 +1,6 @@
 package org.segment.kvctl.shard
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.AutoClone
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
@@ -36,7 +37,9 @@ class ShardNode {
 
     // if kvrocks process is down when migrating slots, restart process could not just refresh cluster nodes
     // need load these and compare with shard detail target shard slots range, refer App.refreshOneShardNodeWhenRestart
+    @JsonIgnore
     TreeSet<Integer> migratingSlotSet
+    @JsonIgnore
     TreeSet<Integer> importingSlotSet
 
     String uuid() {

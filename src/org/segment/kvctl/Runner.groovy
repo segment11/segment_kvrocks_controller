@@ -133,7 +133,11 @@ options.addOption('r', 'replica_index', true, 'target replica index, eg. 0 or 1'
 
 options.addOption('J', 'job_log', false, 'display job log')
 options.addOption('L', 'delete_job_log', true, 'delete job log by id, eg. -L=* or -L=1,2,3')
+options.addOption('U', 'tmp_saved_migrated_slot_log', false, 'display tmp saved migrated slot log')
 options.addOption('T', 'delete_tmp_saved_migrated_slot_log', true, 'delete by job log id, eg. -T=* or -T=1,2,3')
+options.addOption('R', 'redo_one_job_by_id', true, 'redo one job by one job log id, eg. -R=1')
+options.addOption('O', 'redo_one_job_by_id_force', false,
+        'redo one job by one job log id ignore done and result is ok, eg. -R=1 -O')
 
 options.addOption('F', 'migrate_slots', true, 'migrate some slots to current session ip/port shard node, eg. -F=0')
 options.addOption('M', 'fix_migrating_node', false, 'fix refresh cluster nodes after restart when migrate job undone')
