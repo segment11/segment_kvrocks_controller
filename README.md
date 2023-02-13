@@ -169,10 +169,16 @@ View the current cluster jobs:
 
 ```shell script
 -J
+# redo one job
+-R=jobId1
+# redo one job force
+-R=jobId1 -O
 # delete target job records
 -L=jobId1,jobId2
 # delete all job records
 -L=*
+# view tmp saved migrated slots record list in history jobs (eg. see more detail for migrate slots using -F=0-10 --ip=** --port=**)
+-U
 # delete tmp saved migrated slots record in one job (usually for crash slot range total overlay situation)
 -T=jobId1,jobId2
 -T=*
