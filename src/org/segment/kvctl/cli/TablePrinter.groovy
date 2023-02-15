@@ -40,8 +40,12 @@ class TablePrinter {
             maxLengths << table.collect { it[i] }.max { it.length() }.length()
         }
 
-        def totalLength = (maxLengths.sum() as int) + 3 * maxLengths.size() + 1
-        def rowSplit = (0..<totalLength).collect { '-' }.join('')
+        def sbRow = new StringBuilder()
+        for (maxLength in maxLengths) {
+            sbRow << '+' << '-' * (maxLength + 2)
+        }
+        sbRow << '+'
+        def rowSplit = sbRow.toString()
 
         def sb = new StringBuilder()
         sb << rowSplit
