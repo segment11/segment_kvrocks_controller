@@ -18,14 +18,14 @@ This project is a command line tool as a controller for [Apache Kvrocks](https:/
 ### Run in docker
 
 ```shell script
-- docker run -it --name=segment_kvrocks_controller --net=host -v /opt/data:/opt/data key232323/segment_kvrocks_controller:latest bash
-- java -jar segment_kvrocks_controller-1.0.jar dbDataDir=/opt/data/kvrocks_controller_data
+docker run -it --name=segment_kvrocks_controller --net=host -v /opt/data:/opt/data key232323/segment_kvrocks_controller:latest bash
+java -jar segment_kvrocks_controller-1.0.jar dbDataDir=/opt/data/kvrocks_controller_data
 ```
 
 ### Run in jar
 
 ```shell script
-- java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=0
+java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=0
 ```
 
 ### Compile from sources or Debug in IDE(eg. IDEA) 
@@ -96,6 +96,12 @@ Add a primary shard node:
 -a -m -s=0 --ip=192.168.99.100 --port=6379 --name=TestCluster --password=***
 -a -m -s=1 --ip=192.168.99.100 --port=6380
 -a -m -s=2 --ip=192.168.99.100 --port=6381
+```
+
+Add some primary shard nodes from beginning:
+
+```shell script 
+-b=192.168.99.100:6379,192.168.99.100:6380
 ```
 
 Add a replica shard node:

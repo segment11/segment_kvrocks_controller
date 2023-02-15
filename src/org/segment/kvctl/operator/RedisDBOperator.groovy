@@ -51,7 +51,7 @@ class RedisDBOperator {
 
         one.connectAndGet { jedis ->
             def result = jedis.clusterMeet(newOne.ip, newOne.port)
-            log.info 'cluster meet node: {}, result: {}, this node: {}, and wait a while 2s', newOne.uuid(), result, one.uuid()
+            log.info 'cluster meet node: {}, result: {}, this node: {}, need wait a while 2s', newOne.uuid(), result, one.uuid()
         }
     }
 
@@ -169,8 +169,9 @@ class RedisDBOperator {
                         ', this node: ' + fromUuid + ', slot: ' + slot)
             }
         }
-        log.info 'done migrate slot: {}, key number: {}, from node: {}, to node: {}',
+        log.debug 'done migrate slot: {}, key number: {}, from node: {}, to node: {}',
                 slot, count, fromUuid, toIp + ':' + toPort
+        log.info 'done slot: {}', slot
     }
 
     static void migrateSlot(Jedis jedis, Jedis jedisTo, Integer slot,
