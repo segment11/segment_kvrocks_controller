@@ -235,9 +235,8 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         if (!list) {
             argsList << "${nodeId} ${ip} ${port} master -".toString()
         } else {
-            for (slotRange in list) {
-                argsList << "${nodeId} ${ip} ${port} master - ${slotRange.begin}-${slotRange.end}".toString()
-            }
+            def allSlotRange = list.collect { it.begin == it.end ? "${it.begin}" : "${it.begin}-${it.end}" }.join(' ')
+            argsList << "${nodeId} ${ip} ${port} master - ${allSlotRange}".toString()
         }
         argsList
     }

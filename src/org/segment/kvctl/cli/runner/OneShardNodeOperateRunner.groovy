@@ -86,6 +86,7 @@ up_shard_node
         return
     }
 
+    // deprecated
     if (cmd.hasOption('fix_migrating_node')) {
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
         if (isEngineRedis) {

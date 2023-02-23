@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 import org.segment.kvctl.App
 import org.segment.kvctl.ClusterVersionHelper
 import org.segment.kvctl.Conf
+import org.segment.kvctl.check.StatusCheckResult
 import org.segment.kvctl.db.MigrateTmpSaveDTO
 import org.segment.kvctl.ex.JobHandleException
 import org.segment.kvctl.jedis.ClusterSetCommand
@@ -14,6 +15,7 @@ import org.segment.kvctl.job.task.MigrateSlotsJobTask
 import org.segment.kvctl.model.MultiSlotRange
 import org.segment.kvctl.shard.ShardNode
 import redis.clients.jedis.Jedis
+import redis.clients.jedis.exceptions.JedisClusterException
 
 @CompileStatic
 @Slf4j
@@ -62,7 +64,21 @@ class KvrocksDBOperator {
                 return
             }
 
-            KvrocksDBOperator.setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
+            StatusCheckResult checkResult
+            try {
+                checkResult = shardNode.statusCheck(shardDetail)
+            } catch (JedisClusterException e) {
+                log.warn e.message
+                checkResult = StatusCheckResult.fail(e.message)
+            }
+
+            if (checkResult.isOk) {
+                log.info 'shard node status check ok, skip refresh: {}', shardNode.uuid()
+            } else {
+                log.warn 'shard node status check fail, message: {}, refresh: {}', checkResult.message, shardNode.uuid()
+                KvrocksDBOperator.setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
+            }
+
             shardNode.clearTmpSaveMigratingSlotValue(appId)
             clearedIpPortSet << shardNode.uuid()
         }
@@ -220,6 +236,8 @@ class KvrocksDBOperator {
         }
     }
 
+    // after 2.3.0 version, restart use exists nodes.conf
+    @Deprecated
     static void refreshOneShardNodeWhenRestart(ShardNode shardNode) {
         def appId = App.instance.id
         def shardDetail = App.instance.shardDetail

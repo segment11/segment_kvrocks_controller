@@ -142,7 +142,7 @@ options.addOption('O', 'redo_one_job_by_id_force', false,
         'redo one job by one job log id ignore done and result is ok, eg. -R=1 -O')
 
 options.addOption('F', 'migrate_slots', true, 'migrate some slots to current session ip/port shard node, eg. -F=0')
-options.addOption('M', 'fix_migrating_node', false, 'fix refresh cluster nodes after restart when migrate job undone')
+options.addOption('M', 'fix_migrating_node', false, 'fix refresh cluster nodes after restart when migrate job undone @deprecated')
 options.addOption('N', 'down_shard_node', false, 'set target shard node down')
 options.addOption('Y', 'up_shard_node', false, 'set target shard node up')
 
