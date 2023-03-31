@@ -34,8 +34,6 @@ TIPS: Your need install jdk8+/gradle6.x+
 
 - mkdir /opt/your-dir
 - cd /opt/your-dir
-- git clone git@github.com:segment11/segment-leaf.git segment-leaf
-- git clone git@github.com:segment11/segmentd.git segmentd
 - git clone git@github.com:segment11/segment_kvrocks_controller.git segment_kvrocks_controller
 - cd segment_kvrocks_controller
 - gradle jar
