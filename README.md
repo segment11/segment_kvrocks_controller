@@ -24,6 +24,8 @@ java -jar segment_kvrocks_controller-1.0.jar dbDataDir=/opt/data/kvrocks_control
 
 ### Run in jar
 
+TIPS: This is for kvrocks cluster, set app.engine.isRedis=1 for redis cluster.
+
 ```shell script
 java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=0
 ```
@@ -77,6 +79,88 @@ jedis.read.timeout.ms=10000
 ```
 
 ## Command line examples
+
+Usage:
+
+```shell script
+usage: please input follow args to run task
+ -A,--check_all_shard_node                       check all shard nodes
+                                                 cluster info/nodes/slots
+                                                 if ok and match
+ -a,--meet_node                                  operation: add one shard
+                                                 node to cluster
+ -b,--init_batch <arg>                           operation: add some
+                                                 primary shard nodes to
+                                                 cluster from beginning,
+                                                 eg.
+                                                 -b=192.168.99.100:6379,19
+                                                 2.168.99.100:6380
+ -C,--clear                                      clear old application
+                                                 saved local
+ -c,--check_shard_node                           check one shard node
+                                                 cluster info/nodes/slots
+                                                 if ok and match
+ -d,--forget_node                                operation: remove one
+                                                 shard node from cluster
+ -D,--delete                                     delete application local
+ -f,--failover                                   operation: failover one
+                                                 shard replica node as
+                                                 primary
+ -F,--migrate_slots <arg>                        migrate some slots to
+                                                 current session ip/port
+                                                 shard node, eg. -F=0
+ -h,--ip <arg>                                   target node ip
+ -H,--help                                       args help
+ -I,--import <arg>                               import new application
+                                                 from exist kvrocks
+                                                 cluster, require ip:port,
+                                                 eg.
+                                                 -I=192.168.99.100:6379
+ -J,--job_log                                    display job log
+ -L,--delete_job_log <arg>                       delete job log by id, eg.
+                                                 -L=* or -L=1,2,3
+ -m,--is_primary                                 is primary, eg. true or
+                                                 false
+ -M,--fix_migrating_node                         fix refresh cluster nodes
+                                                 after restart when
+                                                 migrate job undone
+                                                 @deprecated
+ -n,--name <arg>                                 define a unique
+                                                 application name for
+                                                 target kvrocks cluster,
+                                                 eg. myCluster1 or
+                                                 testCluster
+ -N,--down_shard_node                            set target shard node
+                                                 down
+ -O,--redo_one_job_by_id_force                   redo one job by one job
+                                                 log id ignore done and
+                                                 result is ok, eg. -R=1 -O
+ -p,--password <arg>                             kvrocks server password
+ -P,--port <arg>                                 target node port
+ -Q,--quit                                       quit console
+ -r,--replica_index <arg>                        target replica index, eg.
+                                                 0 or 1
+ -R,--redo_one_job_by_id <arg>                   redo one job by one job
+                                                 log id, eg. -R=1
+ -S,--shard_slot_range_re_avg <arg>              migrate other slot to
+                                                 target primary node so
+                                                 this shard slot range
+                                                 will be avg, require
+                                                 ip:port, eg.
+                                                 -S=192.168.99.100:6379
+ -s,--shard_index <arg>                          target shard index, eg. 0
+                                                 or 1
+ -T,--delete_tmp_saved_migrated_slot_log <arg>   delete by job log id, eg.
+                                                 -T=* or -T=1,2,3
+ -U,--tmp_saved_migrated_slot_log                display tmp saved
+                                                 migrated slot log
+ -v,--view_shard_node                            view one shard node
+                                                 cluster info/nodes/slots
+ -V,--view_shard_detail                          view all shard nodes
+ -X,--x_session_current_variables                view args for reuse in
+                                                 current session
+ -Y,--up_shard_node                              set target shard node up
+```
 
 TIPS:
 
