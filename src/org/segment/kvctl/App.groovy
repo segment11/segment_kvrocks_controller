@@ -104,7 +104,7 @@ class App {
 
     // set one shard node new node id so it can do migrate slot if need
     App meetNode(ShardNode addShardNode) {
-        assert id && password
+        assert id
 
         if (!shardDetail) {
             shardDetail = new ShardDetail()
@@ -143,6 +143,9 @@ class App {
                 def shardNew = new Shard(shardIndex: shardIndex, multiSlotRange: newMultiSlotRange)
                 shardNew.nodeList << addShardNode
                 shardDetail.shards << shardNew
+
+                def nodeId = shardNew.nodeId(addShardNode)
+                addShardNode.initNodeId(nodeId)
 
                 // first shard, if shard index 0 is removed, new add shard shard index must be > 0
                 if (shardIndex == 0) {
@@ -290,7 +293,7 @@ class App {
     }
 
     App forgetNode(ShardNode removeShardNode) {
-        assert id && password
+        assert id
 
         if (!shardDetail) {
             throw new IllegalStateException('no shard exists')
@@ -399,7 +402,7 @@ class App {
     }
 
     void failover(Integer shardIndex, Integer replicaIndex) {
-        assert id && password
+        assert id
 
         if (!shardDetail) {
             throw new IllegalStateException('no shard exists')

@@ -27,15 +27,17 @@ if (new File(c.projectPath('/segment_kvrocks_controller-1.0.jar')).exists()) {
 }
 
 // init db access
-def dbDataDir = c.getString('dbDataDir', '/opt/kvrocks_controller_data')
+def dbDataFile = c.getString('dbDataFile', System.getProperty('user.home') + '/kvrocks_controller_data')
 // not windows, do not use D: prefix
 if (!System.getProperty('os.name').toLowerCase().contains('windows')) {
-    dbDataDir = dbDataDir.replace('D:', '')
+    dbDataFile = dbDataFile.replace('D:', '')
 }
-def ds = Ds.h2LocalWithPool(dbDataDir, 'default_ds')
+def ds = Ds.dbType(Ds.DBType.h2Local).cacheAs('default_ds')
+        .filters('stat')
+        .connectWithPool(null, 0, dbDataFile, 'sa', null, 1, 1)
 def d = new D(ds, new MySQLDialect())
 // check if need create table first
-def tableNameList = d.query("show tables", String).collect { it.toUpperCase() }
+def tableNameList = d.query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES", String).collect { it.toUpperCase() }
 if (!('APP' in tableNameList)) {
     def ddl = '''
 create table app (
@@ -159,7 +161,7 @@ println 'input .. to reuse latest line input'
 def isLocalTest = c.isOn('isLocalTest')
 
 String globalName = isLocalTest ? 'test' : c.get('app.globalName')
-String globalPassword = isLocalTest ? 'test1234' : c.get('app.globalPassword')
+String globalPassword = isLocalTest ? null : c.get('app.globalPassword')
 String globalIp
 String globalPort
 
@@ -256,8 +258,8 @@ while (true) {
             continue
         }
 
-        if (!cmd.hasOption('name') || !cmd.hasOption('password')) {
-            log.error 'name and password required'
+        if (!cmd.hasOption('name')) {
+            log.error 'name required'
             continue
         }
 
