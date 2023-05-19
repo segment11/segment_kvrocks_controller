@@ -19,7 +19,7 @@ This project is a command line tool as a controller for [Apache Kvrocks](https:/
 
 ```shell script
 docker run -it --name=segment_kvrocks_controller --net=host -v /opt/data:/opt/data key232323/segment_kvrocks_controller:latest bash
-java -jar segment_kvrocks_controller-1.0.jar dbDataDir=/opt/data/kvrocks_controller_data
+java -jar segment_kvrocks_controller-1.0.jar dbDataFile=/opt/data/kvrocks_controller_data
 ```
 
 ### Run in jar
@@ -47,13 +47,13 @@ TIPS: Your need install jdk8+/gradle6.x+
 This project has a default conf.properties in jar. You can overwrite configure item values when start.
 
 ```shell script
-java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=1 dbDataDir=/your-dir/kvrocks_controller_data
+java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=0 dbDataFile=/your-dir/kvrocks_controller_data
 ```
 
-Tips: Item dbDataDir is a H2 database local file.
+Tips: Item dbDataFile is a H2 database local file.
 
 ```
-dbDataDir=D:/opt/kvrocks_controller_data
+dbDataFile=D:/opt/kvrocks_controller_data
 
 app.engine.isRedis=0
 isLocalTest=0
