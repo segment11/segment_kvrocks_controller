@@ -86,8 +86,9 @@ import
         primary.nodeIdFix = cn.nodeId
         shard.nodeList << primary
 
-        def repliaClusterNodeList = allClusterNodeList.findAll { !it.isPrimary && it.followNodeId == cn.nodeId }
-        for (rcn in repliaClusterNodeList) {
+        def replicaClusterNodeList = allClusterNodeList.findAll { !it.isPrimary && it.followNodeId == cn.nodeId }
+        int replicaIndex = 0
+        for (rcn in replicaClusterNodeList) {
             clusterVersionSet << rcn.clusterVersion()
 
             // check if replica slot range is match
@@ -99,10 +100,13 @@ import
             def replica = new ShardNode()
             replica.shardIndex = shardIndex
             replica.isPrimary = false
+            replica.replicaIndex = replicaIndex
             replica.ip = rcn.ip
             replica.port = rcn.port
             replica.nodeIdFix = rcn.nodeId
             shard.nodeList << replica
+
+            replicaIndex++
         }
 
         shardDetail.shards << shard
