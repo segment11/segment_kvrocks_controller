@@ -30,10 +30,18 @@ java -jar segment_kvrocks_controller-1.0.jar
 -a -m -s=0 --ip=127.0.0.1 --port=6379 --name=test
 -V
 -A
--a
+-c
 -a -m -s=1 --ip=127.0.0.1 --port=6380
 -V
 -A
+-c
+-d
+-V
+-a -s=0 -r=0 --port=6380
+-V
+-A
+-c
+-Q
 ```
 
 ## kvrocks
