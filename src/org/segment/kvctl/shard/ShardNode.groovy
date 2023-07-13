@@ -156,7 +156,7 @@ class ShardNode {
         def log = LoggerFactory.getLogger(ShardNode.class)
 
         // query and delete only for log
-        def list = new MigrateTmpSaveDTO(appId: appId, ip: ip, port: port).loadList()
+        def list = new MigrateTmpSaveDTO(appId: appId, ip: ip, port: port).list()
         for (one in list) {
             if (!jobLogId || jobLogId == one.jobLogId) {
                 new MigrateTmpSaveDTO(id: one.id).delete()
@@ -176,7 +176,7 @@ class ShardNode {
 
         TreeSet<Integer> set = []
 
-        def list = new MigrateTmpSaveDTO(appId: appId, jobLogId: jobLogId, ip: ip, port: port, type: type).loadList()
+        def list = new MigrateTmpSaveDTO(appId: appId, jobLogId: jobLogId, ip: ip, port: port, type: type).list()
         for (one in list) {
             log.info 'load from db, job id: {}, val: {}', jobLogId, one.slotRangeValue
             def savedSet = MultiSlotRange.fromSelfString(one.slotRangeValue).toTreeSet()

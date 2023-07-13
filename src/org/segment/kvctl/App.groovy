@@ -64,7 +64,7 @@ class App {
         one.update()
 
         // set old job log expired for better view
-        def jobLogList = new JobLogDTO(appId: id).loadList()
+        def jobLogList = new JobLogDTO(appId: id).list()
         for (jobLog in jobLogList) {
             if (!jobLog.step.contains(' expired')) {
                 new JobLogDTO(id: jobLog.id, step: jobLog.step + ' expired').update()

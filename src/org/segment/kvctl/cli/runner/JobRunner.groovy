@@ -29,7 +29,7 @@ redo_one_job_by_id
     def numberPat = ~/^\d+$/
 
     if (cmd.hasOption('job_log')) {
-        def jobLogList = new JobLogDTO(appId: app.id).loadList()
+        def jobLogList = new JobLogDTO(appId: app.id).list()
         if (jobLogList) {
             TablePrinter.printRecordList(jobLogList.collect { (Record) it })
         } else {
@@ -60,7 +60,7 @@ redo_one_job_by_id
     }
 
     if (cmd.hasOption('tmp_saved_migrated_slot_log')) {
-        def list = new MigrateTmpSaveDTO(appId: app.id).loadList()
+        def list = new MigrateTmpSaveDTO(appId: app.id).list()
         if (list) {
             TablePrinter.printRecordList(list.collect { (Record) it })
         } else {
@@ -84,7 +84,7 @@ redo_one_job_by_id
                 continue
             }
 
-            def list = new MigrateTmpSaveDTO(jobLogId: jid as int).queryFields('id').loadList()
+            def list = new MigrateTmpSaveDTO(jobLogId: jid as int).queryFields('id').list()
             if (list) {
                 for (one in list) {
                     new MigrateTmpSaveDTO(id: one.id).delete()
