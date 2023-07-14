@@ -14,6 +14,9 @@ class Conf {
         if (workDir[-1] == '.') {
             workDir = workDir[0..-2]
         }
+        if (workDir[-1] == '/') {
+            workDir = workDir[0..-2]
+        }
         put('workDir', workDir)
         this
     }
@@ -25,7 +28,7 @@ class Conf {
     Map<String, String> params = [:]
 
     Conf load(String[] args) {
-        def resource = this.class.classLoader.getResource('conf.properties')
+        def resource = this.class.classLoader.getResource('/conf.properties')
         def confFile = resource ? new File(resource.file) : new File(projectPath('/conf.properties'))
         if (confFile.exists()) {
             confFile.readLines().findAll { it.trim() && !it.startsWith('#') }.each {
@@ -34,6 +37,8 @@ class Conf {
                     params[arr[0]] = arr[1..-1].join('=')
                 }
             }
+        } else {
+            println 'conf.properties not found'
         }
 
         if (args) {

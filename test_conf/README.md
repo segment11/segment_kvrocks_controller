@@ -19,9 +19,8 @@ app.engine.isRedis=1
 
 ```bash
 gradle jar
-cp src/conf.properties build/libs
 cd build/libs
-java -jar segment_kvrocks_controller-1.0.jar
+java -jar segment_kvrocks_controller-1.0.jar app.engine.isRedis=1
 ```
 
 ### test

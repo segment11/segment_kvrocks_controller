@@ -87,11 +87,6 @@ jar {
         configurations.runtimeClasspath.collect {
             it.isDirectory() ? it : zipTree(it)
         }
-    } {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-        exclude "conf.properties"
     }
     zip64 true
 }
