@@ -124,6 +124,7 @@ options.addOption('c', 'check_shard_node', false, 'check one shard node cluster 
 options.addOption('A', 'check_all_shard_node', false, 'check all shard nodes cluster info/nodes/slots if ok and match')
 
 options.addOption('a', 'meet_node', false, 'operation: add one shard node to cluster')
+options.addOption('z', 'lazy_migrate', false, 'do not migrate slots after adding one shard node to cluster')
 options.addOption('b', 'init_batch', true,
         'operation: add some primary shard nodes to cluster from beginning, eg. -b=192.168.99.100:6379,192.168.99.100:6380')
 options.addOption('d', 'forget_node', false, 'operation: remove one shard node from cluster')

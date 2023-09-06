@@ -103,7 +103,8 @@ class App {
     }
 
     // set one shard node new node id so it can do migrate slot if need
-    App meetNode(ShardNode addShardNode) {
+    // if isLazyMigrate = true, then not do migrate slots, you can migrate one shard using shard_slot_range_re_avg
+    App meetNode(ShardNode addShardNode, boolean isLazyMigrate) {
         assert id
 
         if (!shardDetail) {
@@ -183,48 +184,53 @@ class App {
                         }
                     }
 
-                    List<MigrateSlotsJobTask> r = []
+                    if (!isLazyMigrate) {
+                        List<MigrateSlotsJobTask> r = []
 
-                    def lastVersionShardSize = shardDetail.shardsLastClusterVersion.size()
-                    def needMigrateSlotSize = SlotBalancer.needMigrateSlotSize(lastVersionShardSize)
-                    for (shardLastVersion in shardDetail.shardsLastClusterVersion) {
-                        def needMigrateSlotSet = shardLastVersion.multiSlotRange.removeSomeFromEnd(needMigrateSlotSize)
-                        if (!needMigrateSlotSet) {
-                            continue
+                        def lastVersionShardSize = shardDetail.shardsLastClusterVersion.size()
+                        def needMigrateSlotSize = SlotBalancer.needMigrateSlotSize(lastVersionShardSize)
+                        for (shardLastVersion in shardDetail.shardsLastClusterVersion) {
+                            def needMigrateSlotSet = shardLastVersion.multiSlotRange.removeSomeFromEnd(needMigrateSlotSize)
+                            if (!needMigrateSlotSet) {
+                                continue
+                            }
+
+                            def primaryLastVersion = shardLastVersion.primary()
+
+                            def tmpMultiSlotRange = MultiSlotRange.fromSet(needMigrateSlotSet)
+                            for (slotRange in tmpMultiSlotRange.list) {
+                                def task = new MigrateSlotsJobTask('add shard sub task')
+                                task.fromIp = primaryLastVersion.ip
+                                task.fromPort = primaryLastVersion.port
+                                task.fromNodeId = shardLastVersion.nodeId(primaryLastVersion)
+
+                                task.toIp = addShardNode.ip
+                                task.toPort = addShardNode.port
+                                task.toNodeId = newNodeId
+                                task.beginSlot = slotRange.begin
+                                task.endSlot = slotRange.end
+                                r << task
+                            }
                         }
 
-                        def primaryLastVersion = shardLastVersion.primary()
+                        for (task in r) {
+                            task.isAddShard = true
+                            def result = task.run()
+                            if (!result.isOk) {
+                                throw new JobHandleException('add shard job task run failed, abort - ' + task.stepAsUuid())
+                            }
 
-                        def tmpMultiSlotRange = MultiSlotRange.fromSet(needMigrateSlotSet)
-                        for (slotRange in tmpMultiSlotRange.list) {
-                            def task = new MigrateSlotsJobTask('add shard sub task')
-                            task.fromIp = primaryLastVersion.ip
-                            task.fromPort = primaryLastVersion.port
-                            task.fromNodeId = shardLastVersion.nodeId(primaryLastVersion)
+                            // update from and to shard slot range
+                            newMultiSlotRange.addMerge(task.beginSlot, task.endSlot)
 
-                            task.toIp = addShardNode.ip
-                            task.toPort = addShardNode.port
-                            task.toNodeId = newNodeId
-                            task.beginSlot = slotRange.begin
-                            task.endSlot = slotRange.end
-                            r << task
+                            def fromShard = shardDetail.findShardByIpPort(task.fromIp, task.fromPort)
+                            fromShard.multiSlotRange.removeMerge(task.beginSlot, task.endSlot)
+
+                            saveShardDetail()
                         }
-                    }
-
-                    for (task in r) {
-                        task.isAddShard = true
-                        def result = task.run()
-                        if (!result.isOk) {
-                            throw new JobHandleException('add shard job task run failed, abort - ' + task.stepAsUuid())
-                        }
-
-                        // update from and to shard slot range
-                        newMultiSlotRange.addMerge(task.beginSlot, task.endSlot)
-
-                        def fromShard = shardDetail.findShardByIpPort(task.fromIp, task.fromPort)
-                        fromShard.multiSlotRange.removeMerge(task.beginSlot, task.endSlot)
-
-                        saveShardDetail()
+                    } else {
+                        log.warn 'lazy migrate, you can migrate one shard using shard_slot_range_re_avg, eg. -S={}:{}',
+                                addShardNode.ip, addShardNode.port
                     }
                 }
 

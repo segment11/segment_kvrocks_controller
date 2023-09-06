@@ -160,6 +160,9 @@ usage: please input follow args to run task
  -X,--x_session_current_variables                view args for reuse in
                                                  current session
  -Y,--up_shard_node                              set target shard node up
+ -z,--lazy_migrate                               do not migrate slots
+                                                 after adding one shard
+                                                 node to cluster 
 ```
 
 TIPS:

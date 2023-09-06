@@ -117,7 +117,7 @@ meet_node
             return
         }
 
-        app.meetNode(shardNode)
+        app.meetNode(shardNode, cmd.hasOption('lazy_migrate'))
         return
     }
 }
