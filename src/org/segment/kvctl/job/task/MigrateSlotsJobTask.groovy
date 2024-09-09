@@ -132,6 +132,7 @@ class MigrateSlotsJobTask extends AbstractJobTask {
         loadMigratingSlotSet(toShardNode)
 
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
+        def isEngineVelo = Conf.instance.isOn('app.engine.isVelo')
         def isLocalTest = !isEngineRedis && Conf.instance.isOn('isLocalTest') && !ignoreLocalTest
 
         int loopCount = 0
@@ -159,6 +160,10 @@ class MigrateSlotsJobTask extends AbstractJobTask {
                     if (isEngineRedis) {
                         RedisDBOperator.migrateSlot(jedis, jedisTo, slot, fromNodeId, toNodeId, toIp, toPort)
                     } else {
+                        // for velo
+                        if (isEngineVelo) {
+                            KvrocksDBOperator.migrateFromSlot(jedisTo, slot, fromIp, fromPort)
+                        }
                         KvrocksDBOperator.migrateSlot(jedis, jedisTo, slot, fromIp, toIp, fromNodeId, toNodeId)
                     }
                     migratedCount++

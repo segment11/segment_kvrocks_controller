@@ -200,6 +200,22 @@ class KvrocksDBOperator {
         waitUntilMigrateSuccess(jedis, slot, fromNodeId)
     }
 
+    // for velo
+    static void migrateFromSlot(Jedis jedisTo, Integer slot, String fromIp, int fromPort) {
+        // manage slot 0 host port force
+        byte[] r = jedisTo.sendCommand(new ClusterSetCommand("MANAGE"),
+                "SLOT".bytes,
+                slot.toString().bytes,
+                fromIp.bytes,
+                fromPort.toString().bytes,
+                "FORCE".bytes) as byte[]
+        def result = new String(r)
+        if ('OK' != result) {
+            throw new JobHandleException('migrate from slot fail, result: ' + result + ', from ip: ' +
+                    fromIp + ', from port: ' + fromPort + ', slot: ' + slot)
+        }
+    }
+
     static void setSlot(Jedis jedis, String ip, int port, Integer slot, String nodeId, long clusterVersion) {
         log.debug 'cluster version: {}', clusterVersion
         byte[] r = jedis.sendCommand(new ClusterSetCommand("CLUSTERX"),
