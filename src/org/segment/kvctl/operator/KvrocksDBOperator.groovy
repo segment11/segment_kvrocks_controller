@@ -140,7 +140,10 @@ class KvrocksDBOperator {
                         fromNodeId + ', slot: ' + slot + ', migrating_state: ' + line)
             }
         }
-        log.info 'done migrate slot: {}', slot
+
+        if (slot % 100 == 0) {
+            log.info 'done migrate slot: {}', slot
+        }
     }
 
     private static boolean isOffsetOk(String replicationInfo) {
