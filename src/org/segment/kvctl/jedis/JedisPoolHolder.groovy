@@ -58,7 +58,7 @@ class JedisPoolHolder {
         }
     }
 
-    static Object useRedisPool(JedisPool jedisPool, JedisCallback callback) {
+    static <R> R useRedisPool(JedisPool jedisPool, JedisCallback<R> callback) {
         Jedis jedis = jedisPool.resource
         try {
             callback.call(jedis)

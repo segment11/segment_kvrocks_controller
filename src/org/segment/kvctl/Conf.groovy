@@ -78,10 +78,6 @@ class Conf {
         put(key, 1)
     }
 
-    Conf off(String key) {
-        put(key, 0)
-    }
-
     @Override
     String toString() {
         params.toString()

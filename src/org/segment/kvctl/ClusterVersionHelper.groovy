@@ -40,10 +40,6 @@ class ClusterVersionHelper {
         log.debug 'get until val: {}, loop times: {}, app id: {}', toVal, i, appId
     }
 
-    Set<String> keys() {
-        idGenerator.cache.keySet()
-    }
-
     void close() {
         if (idGenerator) {
             idGenerator.close()

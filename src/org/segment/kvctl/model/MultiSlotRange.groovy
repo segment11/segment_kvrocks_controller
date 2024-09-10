@@ -129,7 +129,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         toIntArray(list)
     }
 
-    private static int[] toIntArray(Collection<Integer> list) {
+    static int[] toIntArray(Collection<Integer> list) {
         def arr2 = list.toArray()
         int[] arr = new int[arr2.length]
         for (int i = 0; i < arr2.length; i++) {
@@ -180,7 +180,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         }
 
         for (it in toString.split(',')) {
-            def arr = it.split(/\-/)
+            def arr = it.split(/-/)
             r.addSinge(arr[0] as int, arr[1] as int)
         }
         r

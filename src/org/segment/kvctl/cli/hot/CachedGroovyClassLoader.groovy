@@ -35,18 +35,6 @@ class CachedGroovyClassLoader {
         }
     }
 
-    Object eval(String scriptText, Map<String, Object> variables = null) {
-        Script script = gcl.parseClass(scriptText).newInstance()
-        if (variables != null) {
-            def b = new Binding()
-            variables.each { k, v ->
-                b.setProperty(k, v)
-            }
-            script.binding = b
-        }
-        script.run()
-    }
-
     @CompileStatic
     @Slf4j
     private static class Loader extends GroovyClassLoader {

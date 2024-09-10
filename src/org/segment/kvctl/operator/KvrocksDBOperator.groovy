@@ -35,6 +35,7 @@ class KvrocksDBOperator {
                 throw new JobHandleException('set cluster set nodes fail, result: ' + result +
                         ', ip/port: ' + ip + ':' + port)
             }
+            result
         }
     }
 
@@ -76,7 +77,7 @@ class KvrocksDBOperator {
                 log.info 'shard node status check ok, skip refresh: {}', shardNode.uuid()
             } else {
                 log.warn 'shard node status check fail, message: {}, refresh: {}', checkResult.message, shardNode.uuid()
-                KvrocksDBOperator.setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
+                setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
             }
 
             shardNode.clearTmpSaveMigratingSlotValue(appId)
@@ -97,7 +98,7 @@ class KvrocksDBOperator {
                 shardNode.clearTmpSaveMigratingSlotValue(appId)
                 // clear all nodes
                 // cluster nodes return will have no myself
-                KvrocksDBOperator.setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
+                setNodes(shardNode.ip, shardNode.port, allCommandArgs, clusterVersion)
             }
         }
 
@@ -185,8 +186,7 @@ class KvrocksDBOperator {
         log.info 'done wait offset, node: {}', uuid
     }
 
-    static void migrateSlot(Jedis jedis, Jedis jedisTo, Integer slot, String fromIp, String toIp,
-                            String fromNodeId, String toNodeId) {
+    static void migrateSlot(Jedis jedis, Integer slot, String fromNodeId, String toNodeId) {
         byte[] r = jedis.sendCommand(new ClusterSetCommand("CLUSTERX"),
                 "MIGRATE".bytes,
                 slot.toString().bytes,

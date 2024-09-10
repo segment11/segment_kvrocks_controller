@@ -6,6 +6,7 @@ import org.segment.kvctl.App
 import org.segment.kvctl.Conf
 import org.segment.kvctl.ex.JobHandleException
 import org.segment.kvctl.jedis.JedisPoolHolder
+import org.segment.kvctl.model.MultiSlotRange
 import org.segment.kvctl.shard.Shard
 import org.segment.kvctl.shard.ShardNode
 import redis.clients.jedis.Jedis
@@ -14,15 +15,6 @@ import redis.clients.jedis.params.MigrateParams
 @CompileStatic
 @Slf4j
 class RedisDBOperator {
-    private static int[] toIntArray(Collection<Integer> list) {
-        def arr2 = list.toArray()
-        int[] arr = new int[arr2.length]
-        for (int i = 0; i < arr2.length; i++) {
-            arr[i] = arr2[i] as int
-        }
-        arr
-    }
-
     private static String[] toStringArray(Collection<String> list) {
         def arr2 = list.toArray()
         String[] arr = new String[arr2.length]
@@ -34,10 +26,9 @@ class RedisDBOperator {
 
     static String getNodeId(String ip, int port) {
         def jedisPool = JedisPoolHolder.instance.create(ip, port)
-        def nodeId = JedisPoolHolder.useRedisPool(jedisPool) { jedis ->
+        JedisPoolHolder.useRedisPool(jedisPool) { jedis ->
             return jedis.clusterMyId()
         }
-        nodeId.toString()
     }
 
     // need wait a while after meet, or node id not known
@@ -136,7 +127,7 @@ class RedisDBOperator {
         }
 
         if (needAddSlotList) {
-            def arr = toIntArray(needAddSlotList)
+            def arr = MultiSlotRange.toIntArray(needAddSlotList)
             if (setExistInTree) {
                 log.warn 'why need add slot, migrate fail? need add slots: {}, this node: {}', arr, uuid
             } else {

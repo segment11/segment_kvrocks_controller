@@ -164,7 +164,7 @@ class MigrateSlotsJobTask extends AbstractJobTask {
                         if (isEngineVelo) {
                             KvrocksDBOperator.migrateFromSlot(jedisTo, slot, fromIp, fromPort)
                         }
-                        KvrocksDBOperator.migrateSlot(jedis, jedisTo, slot, fromIp, toIp, fromNodeId, toNodeId)
+                        KvrocksDBOperator.migrateSlot(jedis, slot, fromNodeId, toNodeId)
                     }
                     migratedCount++
 

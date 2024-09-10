@@ -180,13 +180,18 @@ while (true) {
     } else if (line == 'help') {
         println 'java -jar segment_kvrocks_controller-1.0.jar'
         println 'you mean --help?'
-        continue
+//        continue
     } else if (line.startsWith('..') || line.startsWith('-') || line.startsWith('--')) {
         def lineArgs = line.split(' ')
         boolean needReplaceLastLine = false
         for (int i = 0; i < lineArgs.length; i++) {
             def arg = lineArgs[i]
             if ('..' == arg) {
+                if (lastLine == null) {
+                    println 'no last line to reuse'
+                    continue
+                }
+
                 lineArgs[i] = lastLine
                 needReplaceLastLine = true
             }

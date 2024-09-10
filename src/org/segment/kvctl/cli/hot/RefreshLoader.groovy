@@ -6,6 +6,7 @@ import org.codehaus.groovy.control.CompilerConfiguration
 
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 @CompileStatic
 @Slf4j
@@ -74,7 +75,7 @@ class RefreshLoader {
                 def jarFile = ((JarURLConnection) url.openConnection()).jarFile
                 for (entry in jarFile.entries()) {
                     if (entry.isDirectory()) {
-                        continue
+//                        continue
                     } else {
                         String name = entry.name
                         runGroovyScriptInJar(name, packageNameDir)
@@ -151,19 +152,9 @@ class RefreshLoader {
             shell.evaluate(file)
             lastModified[file.absolutePath] = file.lastModified()
             log.info 'done refresh {}', name
-            if (refreshFileCallback != null) {
-                refreshFileCallback.call(file)
-            }
         } catch (Exception e) {
             log.error('fail eval - ' + name, e)
         }
-    }
-
-    private Closure<Void> refreshFileCallback
-
-    RefreshLoader refreshFileCallback(Closure<Void> refreshFileCallback) {
-        this.refreshFileCallback = refreshFileCallback
-        this
     }
 
     void stop() {
@@ -187,7 +178,7 @@ class RefreshLoader {
             } catch (Exception e) {
                 log.error('fail runner refresh', e)
             }
-        }, 10, 10, java.util.concurrent.TimeUnit.SECONDS)
+        }, 10, 10, TimeUnit.SECONDS)
         log.info 'start runner refresh loader interval'
     }
 }

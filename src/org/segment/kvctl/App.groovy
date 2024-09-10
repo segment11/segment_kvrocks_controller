@@ -462,7 +462,7 @@ class App {
         }
     }
 
-    void refreshAllShardNode() {
+    static void refreshAllShardNode() {
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
         if (isEngineRedis) {
             // redis need not reset slot range
@@ -536,7 +536,7 @@ class App {
         try {
             tc.connect(host, port)
             return true
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return false
         } finally {
             tc.disconnect()

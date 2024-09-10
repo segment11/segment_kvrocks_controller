@@ -37,7 +37,8 @@ class Shard {
     // kvrocks need, redis use cluster my id get node id
     String nodeId(ShardNode shardNode) {
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
-        if (isEngineRedis) {
+        def isEngineVelo = Conf.instance.isOn('app.engine.isVelo')
+        if (isEngineRedis || isEngineVelo) {
             return RedisDBOperator.getNodeId(shardNode.ip, shardNode.port)
         }
 

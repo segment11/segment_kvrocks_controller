@@ -115,26 +115,22 @@ class ClusterNode {
 
     boolean init(String nodeId) {
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
-        if (isEngineRedis) {
+        def isEngineVelo = Conf.instance.isOn('app.engine.isVelo')
+        if (isEngineRedis || isEngineVelo) {
             return true
         }
-
-        def isEngineVelo = Conf.instance.isOn('app.engine.isVelo')
 
         def jedisPool = JedisPoolHolder.instance.create(ip, port)
         JedisPoolHolder.useRedisPool(jedisPool) { jedis ->
             try {
-                if (isEngineVelo) {
+                def clusterNodes = jedis.clusterNodes()
+                def hasMySelf = clusterNodes.contains('myself')
+                if (!hasMySelf) {
                     setClusterNodeId(jedis, nodeId)
-                } else {
-                    def clusterNodes = jedis.clusterNodes()
-                    def hasMySelf = clusterNodes.contains('myself')
-                    if (!hasMySelf) {
-                        setClusterNodeId(jedis, nodeId)
-                    }
                 }
                 true
             } catch (JedisClusterException e) {
+                log.error 'set node id error, ex: ' + e.message
                 // cluster nodes not set yet
                 setClusterNodeId(jedis, nodeId)
                 false
@@ -177,6 +173,7 @@ class ClusterNode {
             that.multiSlotRange = multiSlotRange
 
             that.clusterInfoKVList = MessageReader.fromClusterInfo(jedis.clusterInfo())
+            true
         }
         that
     }
