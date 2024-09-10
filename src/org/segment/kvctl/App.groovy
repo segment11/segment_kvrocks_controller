@@ -165,7 +165,7 @@ class App {
                             def allClusterNodeList = MessageReader.fromClusterNodes(jedis.clusterNodes(), addShardNode.uuid())
                             def myNode = allClusterNodeList.find { it.isMySelf }
                             // why happen ?
-                            // todo
+                            // delete target node from cluster before, then add it again
                             if (myNode == null) {
                                 // set cluster nodes again
                                 addNewNodeId(addShardNode, addShardNode, newNodeId)
