@@ -119,13 +119,19 @@ class ClusterNode {
             return true
         }
 
+        def isEngineVelo = Conf.instance.isOn('app.engine.isVelo')
+
         def jedisPool = JedisPoolHolder.instance.create(ip, port)
         JedisPoolHolder.useRedisPool(jedisPool) { jedis ->
             try {
-                def clusterNodes = jedis.clusterNodes()
-                def hasMySelf = clusterNodes.contains('myself')
-                if (!hasMySelf) {
+                if (isEngineVelo) {
                     setClusterNodeId(jedis, nodeId)
+                } else {
+                    def clusterNodes = jedis.clusterNodes()
+                    def hasMySelf = clusterNodes.contains('myself')
+                    if (!hasMySelf) {
+                        setClusterNodeId(jedis, nodeId)
+                    }
                 }
                 true
             } catch (JedisClusterException e) {
