@@ -159,9 +159,9 @@ class KvrocksDBOperator {
 
     static void waitUntilOffsetOk(String uuid, Jedis jedis) {
         def c = Conf.instance
-        final int waitMsOnce = c.getInt('job.offset.check.wait.once.ms', 100)
+        final int waitMsOnce = c.getInt('job.offset.check.wait.once.ms', 1000)
         // 5min, may be always not ok because too short
-        final int waitTimesMax = c.getInt('job.offset.check.wait.max', 5 * 60 * 10)
+        final int waitTimesMax = c.getInt('job.offset.check.wait.max', 5 * 60)
 
         def replicationInfo = jedis.info('replication')
         int cc = 0
@@ -206,6 +206,7 @@ class KvrocksDBOperator {
         byte[] r = jedisTo.sendCommand(new ClusterSetCommand("MANAGE"),
                 "SLOT".bytes,
                 slot.toString().bytes,
+                "MIGRATE_FROM".bytes,
                 fromIp.bytes,
                 fromPort.toString().bytes,
                 "FORCE".bytes) as byte[]
