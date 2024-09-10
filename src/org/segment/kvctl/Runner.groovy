@@ -6,7 +6,7 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.segment.d.D
 import org.segment.d.Ds
-import org.segment.d.MySQLDialect
+import org.segment.d.dialect.MySQLDialect
 import org.segment.kvctl.cli.CommandTaskRunnerHolder
 import org.segment.kvctl.cli.hot.CachedGroovyClassLoader
 import org.segment.kvctl.cli.hot.RefreshLoader

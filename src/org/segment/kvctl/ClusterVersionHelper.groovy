@@ -12,8 +12,6 @@ class ClusterVersionHelper {
     private IDGenerator idGenerator
 
     void init() {
-        org.segment.leaf.Conf.instance.params.putAll(Conf.instance.params)
-
         idGenerator = new IDGenerator()
         idGenerator.dataSource = new JobLogDTO().useD().db.dataSource
         idGenerator.init()
