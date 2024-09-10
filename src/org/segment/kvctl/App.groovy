@@ -384,7 +384,7 @@ class App {
                     RedisDBOperator.forgetNode(removeShardNode, removeNodeId)
                 }
 
-                refreshAllShardNode()
+                refreshAllShardNode(removeShardNode)
                 save()
             }
         } else {
@@ -399,7 +399,7 @@ class App {
                     RedisDBOperator.forgetNode(removeShardNode, removeNodeId)
                 }
 
-                refreshAllShardNode()
+                refreshAllShardNode(removeShardNode)
                 save()
             }
         }
@@ -462,13 +462,13 @@ class App {
         }
     }
 
-    static void refreshAllShardNode() {
+    static void refreshAllShardNode(ShardNode removeShardNode = null) {
         def isEngineRedis = Conf.instance.isOn('app.engine.isRedis')
         if (isEngineRedis) {
             // redis need not reset slot range
             RedisDBOperator.refreshAllShardNode()
         } else {
-            KvrocksDBOperator.refreshAllShardNode()
+            KvrocksDBOperator.refreshAllShardNode(removeShardNode)
         }
     }
 

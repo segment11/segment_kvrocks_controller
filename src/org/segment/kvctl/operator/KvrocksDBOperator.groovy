@@ -39,7 +39,7 @@ class KvrocksDBOperator {
         }
     }
 
-    static void refreshAllShardNode() {
+    static void refreshAllShardNode(ShardNode removeShardNode) {
         def appId = App.instance.id
         def shardDetail = App.instance.shardDetail
 
@@ -82,6 +82,11 @@ class KvrocksDBOperator {
 
             shardNode.clearTmpSaveMigratingSlotValue(appId)
             clearedIpPortSet << shardNode.uuid()
+        }
+
+        // removed, also need refresh
+        if (removeShardNode != null) {
+            setNodes(removeShardNode.ip, removeShardNode.port, allCommandArgs, clusterVersion)
         }
 
         // if reduce shard, refresh reduced shard nodes cluster nodes for next time rejoin cluster
