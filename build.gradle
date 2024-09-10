@@ -65,7 +65,7 @@ dependencies {
 
     implementation group: 'com.esotericsoftware', name: 'reflectasm', version: '1.11.9'
 
-    implementation group: 'com.h2database', name: 'h2', version: '2.3.232'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation group: 'com.alibaba', name: 'druid', version: '1.1.24'
 
     implementation group: 'io.prometheus', name: 'simpleclient', version: '0.15.0'
