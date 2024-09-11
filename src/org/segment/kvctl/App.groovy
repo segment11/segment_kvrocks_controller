@@ -262,7 +262,7 @@ class App {
                             throw new JobHandleException('set replica fail, result: ' + result +
                                     ', this node: ' + uuid + ', to primary: ' + primary.uuid())
                         }
-                        KvrocksDBOperator.waitUntilOffsetOk(uuid, jedis)
+                        KvrocksDBOperator.waitUntilOffsetOk(uuid, jedis, primaryNodeId)
                     }
                 } else {
                     def nodeId = targetShard.nodeId(addShardNode)
@@ -286,7 +286,7 @@ class App {
                     KvrocksDBOperator.setNodes(ip, port, allCommandArgs, clusterVersion)
 
                     addShardNode.connectAndGet { jedis ->
-                        KvrocksDBOperator.waitUntilOffsetOk(addShardNode.uuid(), jedis)
+                        KvrocksDBOperator.waitUntilOffsetOk(addShardNode.uuid(), jedis, primaryNodeId)
                     }
                 }
 

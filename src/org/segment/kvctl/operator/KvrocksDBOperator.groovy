@@ -118,9 +118,9 @@ class KvrocksDBOperator {
     private static void waitUntilMigrateSuccess(Jedis jedis, Integer slot, String fromNodeId) {
         def c = Conf.instance
         // ms
-        final int waitMsOnce = c.getInt('job.migrate.wait.once.ms', 10)
-        // 2min
-        final int waitTimesMax = c.getInt('job.migrate.wait.max', 2 * 60 * 100)
+        final int waitMsOnce = c.getInt('job.migrate.wait.once.ms', 1000)
+        // 5min
+        final int waitTimesMax = c.getInt('job.migrate.wait.max', 5 * 60)
 
         def info = jedis.clusterInfo()
         def line = info.readLines().find { it.contains('migrating_state:') }
@@ -131,6 +131,11 @@ class KvrocksDBOperator {
             if (cc >= waitTimesMax) {
                 throw new JobHandleException('migrate wait times over max, from node id: ' +
                         fromNodeId + ', slot: ' + slot)
+            }
+
+            if (cc % 60) {
+                log.info 'wait once {}ms, current loop count: {}, migrating slot: {}, from node id: {}',
+                        waitMsOnce, cc, slot, fromNodeId
             }
 
             log.debug 'wait ms: ' + waitMsOnce
@@ -166,7 +171,7 @@ class KvrocksDBOperator {
         v1 == v2
     }
 
-    static void waitUntilOffsetOk(String uuid, Jedis jedis) {
+    static void waitUntilOffsetOk(String uuid, Jedis jedis, String primaryNodeId) {
         def c = Conf.instance
         final int waitMsOnce = c.getInt('job.offset.check.wait.once.ms', 1000)
         // 5min, may be always not ok because too short
@@ -180,8 +185,9 @@ class KvrocksDBOperator {
                 throw new JobHandleException('offset check wait times over max, node: ' + uuid)
             }
 
-            if (cc % 100 == 0) {
-                log.info 'wait 200ms, loop count: {}', cc
+            if (cc % 60 == 0) {
+                log.info 'wait once {}ms, current loop count: {}, uuid: {}, primary node id: {}',
+                        waitMsOnce, cc, uuid, primaryNodeId
             }
             Thread.sleep(waitMsOnce)
 

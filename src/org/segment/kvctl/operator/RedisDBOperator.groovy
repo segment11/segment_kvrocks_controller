@@ -143,7 +143,7 @@ class RedisDBOperator {
     }
 
     private static void waitUntilMigrateSuccess(Jedis jedis, Integer slot, String toIp, Integer toPort, String fromUuid) {
-        int onceKeyNumber = Conf.instance.getInt('job.migrate.keys.once.number', 100)
+        int onceKeyNumber = Conf.instance.getInt('job.migrate.keys.once.number', 1000)
 
         List<String> keyList
         keyList = jedis.clusterGetKeysInSlot(slot, onceKeyNumber)
