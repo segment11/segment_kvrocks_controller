@@ -147,7 +147,7 @@ class KvrocksDBOperator {
             // to node may be down
             if (line.contains('fail')) {
                 throw new JobHandleException('migrate slot fail, from node id: ' +
-                        fromNodeId + ', slot: ' + slot + ', migrating_state: ' + line)
+                        fromNodeId + ', slot: ' + slot + ', migrating_state: fail')
             }
         }
 
