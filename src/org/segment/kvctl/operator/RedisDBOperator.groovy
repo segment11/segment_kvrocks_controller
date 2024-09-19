@@ -156,6 +156,10 @@ class RedisDBOperator {
             def arr = toStringArray(keyList)
             def result = jedis.migrate(toIp, toPort, 0, new MigrateParams().auth(password), arr)
             if ('OK' != result) {
+                if ('NOKEY' == result) {
+                    break
+                }
+
                 throw new JobHandleException('migrate slot fail, result: ' + result +
                         ', this node: ' + fromUuid + ', slot: ' + slot)
             }
