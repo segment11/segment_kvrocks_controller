@@ -6,9 +6,9 @@ class MultiSlotRangeTest extends Specification {
     def "TotalNumber"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(100, 200)
+        m.addSingle(100, 200)
         def m2 = m.clone()
-        m2.addSinge(0, 10)
+        m2.addSingle(0, 10)
         println m
         println m2
 
@@ -19,12 +19,12 @@ class MultiSlotRangeTest extends Specification {
         m2.toString() == '0-10,100-200'
     }
 
-    def "AddSinge"() {
+    def AddSingle() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
+        m.addSingle(0, 10)
         def m2 = m.clone()
-        m2.addSinge(100, 200)
+        m2.addSingle(100, 200)
         println m
 
         expect:
@@ -36,7 +36,7 @@ class MultiSlotRangeTest extends Specification {
     def "AddMerge"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
+        m.addSingle(0, 10)
         println m
 
         when:
@@ -56,21 +56,21 @@ class MultiSlotRangeTest extends Specification {
         m.list[1].end == 30
     }
 
-    def "RemoveSinge"() {
+    def "RemoveSingle"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         when:
-        m.removeSinge(101, 200)
+        m.removeSingle(101, 200)
         println m
         then:
         m.list.size() == 2
 
         when:
-        m.removeSinge(100, 200)
+        m.removeSingle(100, 200)
         println m
         then:
         m.list.size() == 1
@@ -81,8 +81,8 @@ class MultiSlotRangeTest extends Specification {
     def "RemoveMerge"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         when:
@@ -107,8 +107,8 @@ class MultiSlotRangeTest extends Specification {
     def "RemoveSet"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
 
         MultiSlotRange m2
         MultiSlotRange m3
@@ -144,8 +144,8 @@ class MultiSlotRangeTest extends Specification {
     def "AddSet"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         MultiSlotRange m2
@@ -179,8 +179,8 @@ class MultiSlotRangeTest extends Specification {
     def "RemoveSomeFromEnd"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         TreeSet<Integer> r1
@@ -203,8 +203,8 @@ class MultiSlotRangeTest extends Specification {
     def "Contains"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         expect:
@@ -229,8 +229,8 @@ class MultiSlotRangeTest extends Specification {
     def "ToSet"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         def set = m.toTreeSet()
@@ -251,8 +251,8 @@ class MultiSlotRangeTest extends Specification {
     def "ToList"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         def list = m.toList()
@@ -267,8 +267,8 @@ class MultiSlotRangeTest extends Specification {
     def "ToString"() {
         given:
         def m = new MultiSlotRange()
-        m.addSinge(0, 10)
-        m.addSinge(100, 200)
+        m.addSingle(0, 10)
+        m.addSingle(100, 200)
         println m
 
         expect:

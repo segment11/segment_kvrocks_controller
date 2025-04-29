@@ -82,7 +82,7 @@ class ShardDetail implements JSONFiled {
             pageNum++
 
             shard.multiSlotRange.list.clear()
-            shard.multiSlotRange.addSinge(pager.start, pager.end - 1)
+            shard.multiSlotRange.addSingle(pager.start, pager.end - 1)
         }
     }
 

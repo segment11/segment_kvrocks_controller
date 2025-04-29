@@ -168,7 +168,7 @@ class ClusterNode {
             def mySlotNodeList = allSlotNodeList.findAll { it.nodeId == myNode.nodeId }
             def multiSlotRange = new MultiSlotRange()
             for (slotNode in mySlotNodeList) {
-                multiSlotRange.addSinge(slotNode.beginSlot, slotNode.endSlot)
+                multiSlotRange.addSingle(slotNode.beginSlot, slotNode.endSlot)
             }
             that.multiSlotRange = multiSlotRange
 

@@ -21,7 +21,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         sum
     }
 
-    void addSinge(Integer begin, Integer end) {
+    void addSingle(Integer begin, Integer end) {
         list.add(new SlotRange(begin, end))
         list.sort()
     }
@@ -35,7 +35,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         list = copy.list
     }
 
-    void removeSinge(Integer begin, Integer end) {
+    void removeSingle(Integer begin, Integer end) {
         list.removeIf {
             it.begin == begin && it.end == end
         }
@@ -181,7 +181,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
 
         for (it in toString.split(',')) {
             def arr = it.split(/-/)
-            r.addSinge(arr[0] as int, arr[1] as int)
+            r.addSingle(arr[0] as int, arr[1] as int)
         }
         r
     }
@@ -194,7 +194,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
         }
 
         if (all.size() == (all[-1] - all[0] + 1)) {
-            r.addSinge(all[0], all[-1])
+            r.addSingle(all[0], all[-1])
             return r
         }
 
@@ -214,7 +214,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
 
             if (j != begin) {
                 if (j != last + 1) {
-                    r.addSinge(begin, end)
+                    r.addSingle(begin, end)
                     begin = j
                     end = j
                     last = j
@@ -226,7 +226,9 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
             end = j
         }
 
-        r.addSinge(begin, end)
+        if (begin != null && end != null) {
+            r.addSingle(begin, end)
+        }
         r
     }
 
@@ -246,7 +248,7 @@ class MultiSlotRange implements Comparable<MultiSlotRange> {
 
         def r = new MultiSlotRange()
         for (slotNode in slotNodeList) {
-            r.addSinge(slotNode.beginSlot, slotNode.endSlot)
+            r.addSingle(slotNode.beginSlot, slotNode.endSlot)
         }
         r
     }
