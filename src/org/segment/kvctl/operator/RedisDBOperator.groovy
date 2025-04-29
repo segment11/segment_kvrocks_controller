@@ -163,6 +163,9 @@ class RedisDBOperator {
                 throw new JobHandleException('migrate slot fail, result: ' + result +
                         ', this node: ' + fromUuid + ', slot: ' + slot)
             }
+
+            // get again
+            keyList = jedis.clusterGetKeysInSlot(slot, onceKeyNumber)
         }
         log.debug 'done migrate slot: {}, key number: {}, from node: {}, to node: {}',
                 slot, count, fromUuid, toIp + ':' + toPort
