@@ -38,6 +38,7 @@ TIPS: Your need install jdk8+/gradle6.x+
 - cd /opt/your-dir
 - git clone git@github.com:segment11/segment_kvrocks_controller.git segment_kvrocks_controller
 - cd segment_kvrocks_controller
+- git submodule update --init
 - gradle jar
 - cd build/libs
 - java -jar segment_kvrocks_controller-1.0.jar

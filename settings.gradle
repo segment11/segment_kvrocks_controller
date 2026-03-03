@@ -1,1 +1,7 @@
 rootProject.name = 'segment_kvrocks_controller'
+
+include ':segment_common'
+project(':segment_common').projectDir = new File(settingsDir, './segment_common')
+
+include ':segmentd'
+project(':segmentd').projectDir = new File(settingsDir, './segmentd')
