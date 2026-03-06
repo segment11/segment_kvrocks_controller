@@ -45,7 +45,8 @@ e7d1eecce10fd6bb5eb35b9f99a514335d9ba9ca 127.0.0.1:30001 myself,master - 0 0 1 c
                 one.port = givenArr[1] as int
             }
 
-            one.isPrimary = line.contains('master')
+            def flags = arr[2].split(',')
+            one.isPrimary = 'master' in flags || 'primary' in flags
             one.followNodeId = one.isPrimary ? null : arr[3]
 
             list << one
