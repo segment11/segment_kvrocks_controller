@@ -12,6 +12,8 @@ class AppDTO extends BaseRecord<AppDTO> {
 
     String name
 
+    String username
+
     String password
 
     ShardDetail shardDetail

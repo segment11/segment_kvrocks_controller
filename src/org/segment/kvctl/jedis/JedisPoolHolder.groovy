@@ -32,7 +32,7 @@ class JedisPoolHolder {
 
         def timeoutMillsFinal = timeoutMills != null ? timeoutMills :
                 Conf.instance.getInt('jedis.read.timeout.ms', 10000)
-        def one = new JedisPool(conf, host, port, timeoutMillsFinal, App.instance.password)
+        def one = new JedisPool(conf, host, port, timeoutMillsFinal, App.instance.username, App.instance.password)
         log.info 'connected jedis pool - {}', key
         cached[key] = one
         one

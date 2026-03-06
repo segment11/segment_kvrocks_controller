@@ -43,6 +43,7 @@ if (!('APP' in tableNameList)) {
 create table app (
     id int auto_increment primary key,
     name varchar(100),
+    username varchar(100),
     password varchar(20),
     shard_detail mediumtext,
     updated_date timestamp default current_timestamp
@@ -113,6 +114,7 @@ refreshLoader.start()
 def options = new Options()
 options.addOption('n', 'name', true,
         'define a unique application name for target kvrocks cluster, eg. myCluster1 or testCluster')
+options.addOption('u', 'username', true, 'kvrocks server username')
 options.addOption('p', 'password', true, 'kvrocks server password')
 options.addOption('C', 'clear', false, 'clear old application saved local')
 options.addOption('I', 'import', true,
@@ -165,6 +167,7 @@ println 'input .. to reuse latest line input'
 def isLocalTest = c.isOn('isLocalTest')
 
 String globalName = isLocalTest ? 'test' : c.get('app.globalName')
+String globalUsername = isLocalTest ? null : c.get('app.globalUsername')
 String globalPassword = isLocalTest ? null : c.get('app.globalPassword')
 String globalIp
 String globalPort
@@ -211,6 +214,9 @@ while (true) {
         if (globalName && !finalLine.contains('-n=') && !finalLine.contains('--name=')) {
             finalLine += (' -n=' + globalName)
         }
+        if (globalUsername && !finalLine.contains('-u=') && !finalLine.contains('--username=')) {
+            finalLine += (' -u=' + globalUsername)
+        }
         if (globalPassword && !finalLine.contains('-p=') && !finalLine.contains('--password=')) {
             finalLine += (' -p=' + globalPassword)
         }
@@ -246,6 +252,10 @@ while (true) {
             globalName = cmd.getOptionValue('name')
         }
 
+        if (cmd.hasOption('username')) {
+            globalUsername = cmd.getOptionValue('username')
+        }
+
         if (cmd.hasOption('password')) {
             globalPassword = cmd.getOptionValue('password')
         }
@@ -261,6 +271,7 @@ while (true) {
         if (cmd.hasOption('x_session_current_variables')) {
             println 'app id: '.padRight(20, ' ') + App.instance.id
             println 'name: '.padRight(20, ' ') + globalName
+            println 'username: '.padRight(20, ' ') + globalUsername
             println 'password: '.padRight(20, ' ') + globalPassword
             println 'ip: '.padRight(20, ' ') + globalIp
             println 'port: '.padRight(20, ' ') + globalPort
@@ -274,7 +285,10 @@ while (true) {
 
         try {
             def app = App.instance
-            app.init(cmd.getOptionValue('name'), cmd.getOptionValue('password'), cmd.hasOption('clear'))
+            app.init(cmd.getOptionValue('name'),
+                    cmd.getOptionValue('username'),
+                    cmd.getOptionValue('password'),
+                    cmd.hasOption('clear'))
 
             def isDone = CommandTaskRunnerHolder.instance.run(cmd)
             if (!isDone) {

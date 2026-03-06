@@ -148,13 +148,26 @@ class RedisDBOperator {
         List<String> keyList
         keyList = jedis.clusterGetKeysInSlot(slot, onceKeyNumber)
 
+        def username = App.instance.username
         def password = App.instance.password
+
+        // default 10s
+        def migrateTimeout = Conf.instance.getInt('job.migrate.timeout', 1000 * 10)
+
+        def params = new MigrateParams()
+        if (username) {
+            assert password
+            params.auth2(username, password)
+        } else if (password) {
+            params.auth(password)
+        }
 
         int count = 0
         while (keyList) {
             count += keyList.size()
             def arr = toStringArray(keyList)
-            def result = jedis.migrate(toIp, toPort, 0, new MigrateParams().auth(password), arr)
+
+            def result = jedis.migrate(toIp, toPort, migrateTimeout, params, arr)
             if ('OK' != result) {
                 if ('NOKEY' == result) {
                     break

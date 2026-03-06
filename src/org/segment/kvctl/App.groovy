@@ -26,6 +26,8 @@ class App {
 
     String name
 
+    String username
+
     String password
 
     ShardDetail shardDetail
@@ -57,6 +59,7 @@ class App {
         def one = new AppDTO()
         one.id = id
         one.name = name
+        one.username = username
         one.password = password
         one.shardDetail = shardDetail
         one.updatedDate = new Date()
@@ -480,14 +483,16 @@ class App {
         new MigrateTmpSaveDTO(appId: id).deleteAll()
 
         id = null
+        username = null
         password = null
         shardDetail = null
 
         this
     }
 
-    App init(String name, String password, boolean clear) {
+    App init(String name, String username, String password, boolean clear) {
         this.name = name
+        this.username = username
         this.password = password
 
         // clear = true => table app row, this application itself will be deleted
@@ -503,9 +508,16 @@ class App {
         def one = new AppDTO(name: name).one()
         if (one) {
             this.id = one.id
+            // ignore, use new one
+            if (this.username != one.username) {
+                log.warn 'username not equal, old: {}, new: {}', one.username, username
+            }
+            if (this.password != one.password) {
+                log.warn 'password not equal, old: {}, new: {}', one.password, password
+            }
             this.shardDetail = one.shardDetail
         } else {
-            this.id = new AppDTO(name: name, password: password, updatedDate: new Date()).add()
+            this.id = new AppDTO(name: name, username: username, password: password, updatedDate: new Date()).add()
         }
 
         createLeafAlloc()
