@@ -156,50 +156,6 @@ class KvrocksDBOperator {
         }
     }
 
-    private static boolean isOffsetOk(String replicationInfo) {
-        def kvPairList = MessageReader.fromClusterInfo(replicationInfo)
-        if (kvPairList.find { it.key == 'master_link_status' }?.value != 'up') {
-            return false
-        }
-
-        def v1 = kvPairList.find { it.key == 'master_repl_offset' }?.value
-        def v2 = kvPairList.find { it.key == 'slave_repl_offset' }?.value
-        if (!v1 || !v2) {
-            return false
-        }
-
-        v1 == v2
-    }
-
-    static void waitUntilOffsetOk(String uuid, Jedis jedis, String primaryNodeId) {
-        def c = Conf.instance
-        final int waitMsOnce = c.getInt('job.offset.check.wait.once.ms', 1000)
-        // 5min, may be always not ok because too short
-        final int waitTimesMax = c.getInt('job.offset.check.wait.max', 5 * 60)
-
-        def replicationInfo = jedis.info('replication')
-        int cc = 0
-        while (!isOffsetOk(replicationInfo)) {
-            cc++
-            if (cc >= waitTimesMax) {
-                throw new JobHandleException('offset check wait times over max, node: ' + uuid)
-            }
-
-            if (cc % 60 == 0) {
-                log.info 'wait once {}ms, current loop count: {}, uuid: {}, primary node id: {}',
-                        waitMsOnce, cc, uuid, primaryNodeId
-            }
-            Thread.sleep(waitMsOnce)
-
-            def infoInner = jedis.info('replication')
-            boolean isOffsetOk = isOffsetOk(infoInner)
-            if (isOffsetOk) {
-                break
-            }
-        }
-        log.info 'done wait offset, node: {}', uuid
-    }
-
     static void migrateSlot(Jedis jedis, Integer slot, String fromNodeId, String toNodeId) {
         byte[] r = jedis.sendCommand(new ClusterSetCommand("CLUSTERX"),
                 "MIGRATE".bytes,
